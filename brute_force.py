@@ -349,4 +349,4 @@ if __name__ == "__main__":
     results_sorted = sorted(results, key=lambda result: result["mae"], reverse=True)
 
     for result in results_sorted:
-        print(f"{result['name']}: Mean Absolute Error: {result['mae']}, R2 Score: {result['r2']}")        
+        print(f"{result['name']}: Mean Absolute Error: {result['mae']}, R2 Score: {result['r2']}")    
