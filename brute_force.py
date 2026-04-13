@@ -4,12 +4,18 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 from sklearn.decomposition import PCA
-from sklearn.linear_model import LinearRegression, Ridge 
+from sklearn.cross_decomposition import PLSRegression
+from sklearn.linear_model import LinearRegression, Ridge, ElasticNet
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, ExtraTreesRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, ExtraTreesRegressor, HistGradientBoostingRegressor
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.metrics import mean_absolute_error, r2_score
+
+from skimage.feature import hog
+
+n_jobs = -1  # Use all available CPU cores for parallel processing
+verbose = 2  # Set verbose level for GridSearchCV to get detailed output during the search process
 
 if __name__ == "__main__":
     # Load configs from "config.yaml"
@@ -36,7 +42,7 @@ if __name__ == "__main__":
         }
 
     # Grid Search 
-    grid_mlpr = GridSearchCV(MLPr, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error',n_jobs=-1, verbose=2)
+    grid_mlpr = GridSearchCV(MLPr, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error',n_jobs=n_jobs, verbose=verbose)
     grid_mlpr.fit(X_train, y_train)
 
     best_model_mlpr = grid_mlpr.best_estimator_
@@ -61,7 +67,7 @@ if __name__ == "__main__":
         }
 
     # Grid Search 
-    grid_rfr = GridSearchCV(RFR, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error',n_jobs=-1, verbose=2)
+    grid_rfr = GridSearchCV(RFR, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error',n_jobs=n_jobs, verbose=verbose)
     grid_rfr.fit(X_train, y_train)
 
     best_model_rfr = grid_rfr.best_estimator_
@@ -85,7 +91,7 @@ if __name__ == "__main__":
     }
 
     # Grid Search
-    grid_etr = GridSearchCV(ETR, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error',n_jobs=-1, verbose=2)
+    grid_etr = GridSearchCV(ETR, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error',n_jobs=n_jobs, verbose=verbose)
     grid_etr.fit(X_train, y_train)
 
     best_model_etr = grid_etr.best_estimator_
@@ -111,7 +117,7 @@ if __name__ == "__main__":
     }
 
     # Grid Search
-    grid_gbr = GridSearchCV(GBR, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error',n_jobs=-1, verbose=2)
+    grid_gbr = GridSearchCV(GBR, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error',n_jobs=n_jobs, verbose=verbose)
     grid_gbr.fit(X_train, y_train)
 
     best_model_gbr = grid_gbr.best_estimator_
@@ -124,7 +130,38 @@ if __name__ == "__main__":
     print("Best GradientBoostingRegressor model:", grid_gbr.best_estimator_)
 
 
-   # 5
+    # 5
+    # HistGradientBoostingRegressor
+    HGBR = Pipeline([
+        ("pca", PCA()),
+        ("model", HistGradientBoostingRegressor(random_state=42))
+    ])
+
+    param_grid = {
+        "pca__n_components": [50, 100, 200, 300],
+        "pca__n_components": [20, 50, 100, 150],
+        "model__learning_rate": [0.03, 0.05, 0.1],
+        "model__max_iter": [200, 400],
+        "model__max_depth": [None, 6, 10],
+        "model__min_samples_leaf": [10, 20, 30],
+        "model__l2_regularization": [0.0, 0.1, 1.0],
+    }
+
+    # Grid Search
+    grid_hgbr = GridSearchCV(HGBR, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error', n_jobs=n_jobs, verbose=verbose)
+    grid_hgbr.fit(X_train, y_train)
+
+    best_model_hgbr = grid_hgbr.best_estimator_
+
+    # Evaluation of the model
+    y_pred = best_model_hgbr.predict(X_test)
+    mae_hgbr = mean_absolute_error(y_test, y_pred)
+    r2_hgbr = r2_score(y_test, y_pred)
+    print(f"HistGradientBoostingRegressor: Mean Absolute Error: {mae_hgbr}, HistGradientBoostingRegressor R2 Score: {r2_hgbr}")
+    print("Best HistGradientBoostingRegressor model:", grid_hgbr.best_estimator_)
+
+
+   # 6
    # KNeighbors Regressor
     KNN = Pipeline([
         ('scaler', StandardScaler()),
@@ -147,7 +184,7 @@ if __name__ == "__main__":
 ]
 
     # Grid Search
-    grid_knn = GridSearchCV(KNN, param_grid=param_grid, cv=5, scoring='neg_mean_absolute_error', n_jobs=-1, verbose=2)
+    grid_knn = GridSearchCV(KNN, param_grid=param_grid, cv=5, scoring='neg_mean_absolute_error', n_jobs=n_jobs, verbose=verbose)
     grid_knn.fit(X_train, y_train)
 
     best_model_knn = grid_knn.best_estimator_
@@ -159,7 +196,8 @@ if __name__ == "__main__":
     print(f"KNeighborsRegressor: Mean Absolute Error: {mae_knn}, KNeighborsRegressor R2 Score: {r2_knn}")
     print("Best KNeighborsRegressor model:", grid_knn.best_estimator_)
 
-    #6
+
+    #7
     # ridge regression
     RidgeReg = Pipeline([
         ('scaler', StandardScaler()), 
@@ -173,7 +211,7 @@ if __name__ == "__main__":
     }
 
     # Grid Search
-    grid_ridge = GridSearchCV(RidgeReg, param_grid=param_grid, cv=5, scoring='neg_mean_absolute_error', verbose=2)
+    grid_ridge = GridSearchCV(RidgeReg, param_grid=param_grid, cv=5, scoring='neg_mean_absolute_error', n_jobs=n_jobs, verbose=verbose)
     grid_ridge.fit(X_train, y_train)
 
     best_model_ridge = grid_ridge.best_estimator_
@@ -185,7 +223,8 @@ if __name__ == "__main__":
     print(f"Ridge Regression: Mean Absolute Error: {mae_ridge}, Ridge R2 Score: {r2_ridge}")
     print("Best Ridge Regression model:", grid_ridge.best_estimator_)
 
-    # 7
+
+    # 8
     # Polynomial Regression
     PolyReg = Pipeline([
         ('scaler', StandardScaler()),
@@ -200,7 +239,7 @@ if __name__ == "__main__":
     }
 
     # Grid Search
-    grid_poly = GridSearchCV(PolyReg, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error', verbose=2)
+    grid_poly = GridSearchCV(PolyReg, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error', n_jobs=n_jobs, verbose=verbose)
     grid_poly.fit(X_train, y_train)
 
     best_model_poly = grid_poly.best_estimator_
@@ -212,7 +251,8 @@ if __name__ == "__main__":
     print(f"Polynomial Regression: Mean Absolute Error: {mae_poly}, Polynomial Regression R2 Score: {r2_poly}")
     print("Best Polynomial Regression model:", grid_poly.best_estimator_)
 
-    # 8
+
+    # 9
     # Gaussian Process Regressor
     GPR = Pipeline([
         ('scaler', StandardScaler()),
@@ -226,7 +266,7 @@ if __name__ == "__main__":
     }
 
     # Grid Search
-    grid_gpr = GridSearchCV(GPR, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error', n_jobs=-1, verbose=2)
+    grid_gpr = GridSearchCV(GPR, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error', n_jobs=n_jobs, verbose=verbose)
     grid_gpr.fit(X_train, y_train)
 
     best_model_gpr = grid_gpr.best_estimator_
@@ -239,13 +279,74 @@ if __name__ == "__main__":
     print("Best GaussianProcessRegressor model:", grid_gpr.best_estimator_)
 
 
+    # 10
+    # PLS Regression   
+    PLSR = Pipeline([
+        ('scaler', StandardScaler()),
+        ('model', PLSRegression())
+    ])
+
+    param_grid = {
+        "model__n_components": [2, 5, 10, 20, 50]
+    }
+
+    # Grid Search
+    grid_plsr = GridSearchCV(PLSR, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error', n_jobs=n_jobs, verbose=verbose)
+    grid_plsr.fit(X_train, y_train)
+
+    best_model_plsr = grid_plsr.best_estimator_
+
+    # Evaluation of the model
+    y_pred = best_model_plsr.predict(X_test)
+    mae_plsr = mean_absolute_error(y_test, y_pred)
+    r2_plsr = r2_score(y_test, y_pred)
+    print(f"PLSRegression: Mean Absolute Error: {mae_plsr}, PLSRegression R2 Score: {r2_plsr}")
+    print("Best PLSRegression model:", grid_plsr.best_estimator_)
 
 
-    print(f"MLPRegressor: Mean Absolute Error: {mae_mlp}, MLPRegressor R2 Score: {r2_mlp}")
-    print(f"RandomForestRegressor: Mean Absolute Error: {mae_rfr}, RandomForestRegressor R2 Score: {r2_rfr}")
-    print(f"ExtraTreeRegressor: Mean Absolute Error: {mae_etr}, ExtraTreeRegressor R2 Score: {r2_etr}")
-    print(f"GradientBoostingRegressor: Mean Absolute Error: {mae_gb}, GradientBoostingRegressor R2 Score: {r2_gb}")
-    print(f"KNeighborsRegressor: Mean Absolute Error: {mae_knn}, KNeighborsRegressor R2 Score: {r2_knn}")
-    print(f"Ridge Regression: Mean Absolute Error: {mae_ridge}, Ridge R2 Score: {r2_ridge}")
-    print(f"Polynomial Regression: Mean Absolute Error: {mae_poly}, Polynomial Regression R2 Score: {r2_poly}")
-    print(f"GaussianProcessRegressor: Mean Absolute Error: {mae_gpr}, GaussianProcessRegressor R2 Score: {r2_gpr}")   
+    #11
+    # ElasticNet Regression
+    ElasticNetReg = Pipeline([
+        ('scaler', StandardScaler()),
+        ('pca', PCA()),
+        ('model', ElasticNet(random_state=42, max_iter=7000))
+    ])
+
+    param_grid = {
+        "pca__n_components": [50, 100, 200, 300, 400],
+        "model__alpha": [0.1, 0.5, 1.0, 10.0],
+        "model__l1_ratio": [0.1, 0.5, 0.9]
+    }
+
+    # Grid Search
+    grid_enet = GridSearchCV(ElasticNetReg, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error', n_jobs=n_jobs, verbose=verbose)
+    grid_enet.fit(X_train, y_train)
+    best_model_enet = grid_enet.best_estimator_
+
+    # Evaluation of the model
+    y_pred = best_model_enet.predict(X_test)
+    mae_enet = mean_absolute_error(y_test, y_pred) 
+    r2_enet = r2_score(y_test, y_pred)
+    print(f"ElasticNet Regression: Mean Absolute Error: {mae_enet}, ElasticNet Regression R2 Score: {r2_enet}")
+    print("Best ElasticNet Regression model:", grid_enet.best_estimator_)
+
+
+
+    results = [
+        {"name": "MLPRegressor", "mae": mae_mlp, "r2": r2_mlp},
+        {"name": "RandomForestRegressor", "mae": mae_rfr, "r2": r2_rfr},
+        {"name": "ExtraTreeRegressor", "mae": mae_etr, "r2": r2_etr},
+        {"name": "GradientBoostingRegressor", "mae": mae_gb, "r2": r2_gb},
+        {"name": "HistGradientBoostingRegressor", "mae": mae_hgbr, "r2": r2_hgbr},
+        {"name": "KNeighborsRegressor", "mae": mae_knn, "r2": r2_knn},
+        {"name": "Ridge Regression", "mae": mae_ridge, "r2": r2_ridge},
+        {"name": "Polynomial Regression", "mae": mae_poly, "r2": r2_poly},
+        {"name": "GaussianProcessRegressor", "mae": mae_gpr, "r2": r2_gpr},
+        {"name": "PLSRegression", "mae": mae_plsr, "r2": r2_plsr},
+        {"name": "ElasticNet Regression", "mae": mae_enet, "r2": r2_enet},
+    ]
+
+    results_sorted = sorted(results, key=lambda result: result["mae"], reverse=True)
+
+    for result in results_sorted:
+        print(f"{result['name']}: Mean Absolute Error: {result['mae']}, R2 Score: {result['r2']}")        
