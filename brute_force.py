@@ -139,12 +139,8 @@ if __name__ == "__main__":
 
     param_grid = {
         "pca__n_components": [50, 100, 200, 300],
-        "pca__n_components": [20, 50, 100, 150],
         "model__learning_rate": [0.03, 0.05, 0.1],
-        "model__max_iter": [200, 400],
-        "model__max_depth": [None, 6, 10],
-        "model__min_samples_leaf": [10, 20, 30],
-        "model__l2_regularization": [0.0, 0.1, 1.0],
+        "model__max_iter": [200, 400,800],
     }
 
     # Grid Search
@@ -223,7 +219,7 @@ if __name__ == "__main__":
     print(f"Ridge Regression: Mean Absolute Error: {mae_ridge}, Ridge R2 Score: {r2_ridge}")
     print("Best Ridge Regression model:", grid_ridge.best_estimator_)
 
-
+    """"
     # 8
     # Polynomial Regression
     PolyReg = Pipeline([
@@ -250,7 +246,7 @@ if __name__ == "__main__":
     r2_poly = r2_score(y_test, y_pred)
     print(f"Polynomial Regression: Mean Absolute Error: {mae_poly}, Polynomial Regression R2 Score: {r2_poly}")
     print("Best Polynomial Regression model:", grid_poly.best_estimator_)
-
+    """
 
     # 9
     # Gaussian Process Regressor

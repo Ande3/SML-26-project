@@ -1,3 +1,5 @@
+Greyscale, dowsnamplefactor = 15
+
 GaussianProcessRegressor: Mean Absolute Error: 1.515605385735747, R2 Score: -13.654624630141358
 ElasticNet Regression: Mean Absolute Error: 0.28367973105810507, R2 Score: 0.21271683488265225
 Polynomial Regression: Mean Absolute Error: 0.28357158581143593, R2 Score: -0.048487529160316845
@@ -9,6 +11,21 @@ RandomForestRegressor: Mean Absolute Error: 0.1653983404680867, R2 Score: 0.6721
 ExtraTreeRegressor: Mean Absolute Error: 0.1499361919586538, R2 Score: 0.7149153753820273
 MLPRegressor: Mean Absolute Error: 0.1482190550988607, R2 Score: 0.713270274117952
 KNeighborsRegressor: Mean Absolute Error: 0.13618849815724768, R2 Score: 0.7061047281390753
+
+
+Greyscale, dowsnamplefactor = 20
+
+GaussianProcessRegressor: Mean Absolute Error: 1.4815118004111367, R2 Score: -13.058985066937149     
+Polynomial Regression: Mean Absolute Error: 0.32647838342593544, R2 Score: -0.4699998864188726       
+ElasticNet Regression: Mean Absolute Error: 0.2899228922005786, R2 Score: 0.18001535523615209        
+PLSRegression: Mean Absolute Error: 0.2775281406579939, R2 Score: 0.23445324157295155
+Ridge Regression: Mean Absolute Error: 0.27656867689913983, R2 Score: 0.24443060786490511
+HistGradientBoostingRegressor: Mean Absolute Error: 0.1793398297221156, R2 Score: 0.6272298116052681 
+GradientBoostingRegressor: Mean Absolute Error: 0.1747802261959691, R2 Score: 0.6554796080734997     
+RandomForestRegressor: Mean Absolute Error: 0.1671479264968612, R2 Score: 0.6696259641785154
+ExtraTreeRegressor: Mean Absolute Error: 0.14707561305267908, R2 Score: 0.7223386794489202
+MLPRegressor: Mean Absolute Error: 0.14662348853267498, R2 Score: 0.7142851754554611
+KNeighborsRegressor: Mean Absolute Error: 0.13720605314668213, R2 Score: 0.7004829258751937
 
 
 
