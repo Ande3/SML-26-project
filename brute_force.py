@@ -192,7 +192,7 @@ if __name__ == "__main__":
     print(f"KNeighborsRegressor: Mean Absolute Error: {mae_knn}, KNeighborsRegressor R2 Score: {r2_knn}")
     print("Best KNeighborsRegressor model:", grid_knn.best_estimator_)
 
-
+    """"
     #7
     # ridge regression
     RidgeReg = Pipeline([
@@ -219,7 +219,7 @@ if __name__ == "__main__":
     print(f"Ridge Regression: Mean Absolute Error: {mae_ridge}, Ridge R2 Score: {r2_ridge}")
     print("Best Ridge Regression model:", grid_ridge.best_estimator_)
 
-    """"
+   
     # 8
     # Polynomial Regression
     PolyReg = Pipeline([
@@ -246,7 +246,7 @@ if __name__ == "__main__":
     r2_poly = r2_score(y_test, y_pred)
     print(f"Polynomial Regression: Mean Absolute Error: {mae_poly}, Polynomial Regression R2 Score: {r2_poly}")
     print("Best Polynomial Regression model:", grid_poly.best_estimator_)
-    """
+
 
     # 9
     # Gaussian Process Regressor
@@ -325,7 +325,7 @@ if __name__ == "__main__":
     r2_enet = r2_score(y_test, y_pred)
     print(f"ElasticNet Regression: Mean Absolute Error: {mae_enet}, ElasticNet Regression R2 Score: {r2_enet}")
     print("Best ElasticNet Regression model:", grid_enet.best_estimator_)
-
+    """
 
 
     results = [
@@ -335,11 +335,13 @@ if __name__ == "__main__":
         {"name": "GradientBoostingRegressor", "mae": mae_gb, "r2": r2_gb},
         {"name": "HistGradientBoostingRegressor", "mae": mae_hgbr, "r2": r2_hgbr},
         {"name": "KNeighborsRegressor", "mae": mae_knn, "r2": r2_knn},
+        """
         {"name": "Ridge Regression", "mae": mae_ridge, "r2": r2_ridge},
         {"name": "Polynomial Regression", "mae": mae_poly, "r2": r2_poly},
         {"name": "GaussianProcessRegressor", "mae": mae_gpr, "r2": r2_gpr},
         {"name": "PLSRegression", "mae": mae_plsr, "r2": r2_plsr},
         {"name": "ElasticNet Regression", "mae": mae_enet, "r2": r2_enet},
+        """
     ]
 
     results_sorted = sorted(results, key=lambda result: result["mae"], reverse=True)
