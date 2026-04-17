@@ -1,0 +1,27 @@
+factor = 30
+KNeighborsRegressor: Mean Absolute Error: 0.14463466235129194, R2 Score: 0.6259431249567814
+Best params: {'model__n_neighbors': 1, 'model__p': 1, 'model__weights': 'uniform', 'pca': 'passthrough'}
+ExtraTreeRegressor: Mean Absolute Error: 0.14844364261920323, R2 Score: 0.7190365232199895
+Best params: {'model__max_depth': 30, 'model__min_samples_split': 2, 'model__n_estimators': 200}
+MLPRegressor: Mean Absolute Error: 0.1540862027349279, R2 Score: 0.7022639507438505
+Best params: {'model__alpha': 0.05, 'model__hidden_layer_sizes': (256, 128, 128, 64), 'model__learning_rate_init': 0.001, 'pca__n_components': 50}
+
+factor = 20
+
+KNeighborsRegressor: Mean Absolute Error: 0.14362748609959586, R2 Score: 0.6425893347463948
+Best params: {'model__n_neighbors': 1, 'model__p': 1, 'model__weights': 'uniform', 'pca': 'passthrough'}
+MLPRegressor: Mean Absolute Error: 0.14559540074369692, R2 Score: 0.7105852475783209
+Best params: {'model__alpha': 0.05, 'model__hidden_layer_sizes': (512, 256, 512), 'pca__n_components': 50}
+ExtraTreeRegressor: Mean Absolute Error: 0.14721832414418376, R2 Score: 0.7214928502290285
+Best params: {'model__max_depth': None, 'model__min_samples_split': 2, 'model__n_estimators': 200}
+
+factor = 15
+
+KNeighborsRegressor: Mean Absolute Error: 0.13676133880970845, R2 Score: 0.6765454671847609
+Best params: {'model__n_neighbors': 1, 'model__p': 1, 'model__weights': 'uniform', 'pca': 'passthrough'}
+ExtraTreeRegressor: Mean Absolute Error: 0.1499361919586538, R2 Score: 0.7149153753820273
+Best params: {'model__max_depth': 30, 'model__min_samples_split': 2, 'model__n_estimators': 200}
+MLPRegressor: Mean Absolute Error: 0.1717734827165098, R2 Score: 0.6771798522250458
+Best params: {'model__alpha': 0.1, 'model__hidden_layer_sizes': (256, 128, 128, 64), 'pca__n_components': 20}
+
+

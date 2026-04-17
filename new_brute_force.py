@@ -32,9 +32,9 @@ if __name__ == "__main__":
     ])
 
     param_grid = {
-        "pca__n_components": [50, 100, 200, 300, 400],
-        "model__hidden_layer_sizes": [(128, 64),(256, 256, 256), (256, 64, 64, 128), (256, 128, 128, 64)],
-        "model__alpha": [0.05, 0.1, 0.2, 0.5]
+        "pca__n_components": [20, 50, 100, 200, 300, 400],
+        "model__hidden_layer_sizes": [(128, 64),(256, 256, 256),(512, 256, 512), (256, 64, 64, 128), (256, 128, 128, 64)],
+        "model__alpha": [0.05, 0.1, 0.2, 0.5],
         }
 
     # Grid Search 
@@ -49,6 +49,7 @@ if __name__ == "__main__":
     r2_mlp = r2_score(y_test, y_pred)
     print(f"MLPRegressor: Mean Absolute Error: {mae_mlp}, MLPRegressor R2 Score: {r2_mlp}")
     print("Best MLPRegressor model:", grid_mlpr.best_estimator_)
+    print("Best MLPRegressor params:", grid_mlpr.best_params_)
 
 
     # extra tree regressor
@@ -58,7 +59,8 @@ if __name__ == "__main__":
 
     param_grid = {
         "model__n_estimators": [30 ,50, 100, 200],
-        "model__max_depth": [None, 10, 20, 30]
+        "model__max_depth": [None, 10, 20, 30],
+        "model__min_samples_split": [2, 5, 10],
     }
 
     # Grid Search
@@ -73,6 +75,7 @@ if __name__ == "__main__":
     r2_etr = r2_score(y_test, y_pred)
     print(f"ExtraTreeRegressor: Mean Absolute Error: {mae_etr}, ExtraTreeRegressor R2 Score: {r2_etr}")
     print("Best ExtraTreeRegressor model:", grid_etr.best_estimator_)
+    print("Best ExtraTreeRegressor params:", grid_etr.best_params_)
 
 
     # KNeighbors Regressor
@@ -85,7 +88,7 @@ if __name__ == "__main__":
     param_grid = [                              # Mit und ohne PCA testen
     {
         "pca": [PCA()],
-        "pca__n_components": [20, 50, 100, 150],
+        "pca__n_components": [20, 50, 100, 150, 300],
         "model__n_neighbors": range(1, 52, 2),
         "model__weights": ["uniform", "distance"],
         "model__p": [1, 2],
@@ -110,11 +113,12 @@ if __name__ == "__main__":
     r2_knn = r2_score(y_test, y_pred)
     print(f"KNeighborsRegressor: Mean Absolute Error: {mae_knn}, KNeighborsRegressor R2 Score: {r2_knn}")
     print("Best KNeighborsRegressor model:", grid_knn.best_estimator_)
+    print("Best KNeighborsRegressor params:", grid_knn.best_params_)
 
     results = [
-        {"name": "MLPRegressor", "mae": mae_mlp, "r2": r2_mlp},
-        {"name": "ExtraTreeRegressor", "mae": mae_etr, "r2": r2_etr},
-        {"name": "KNeighborsRegressor", "mae": mae_knn, "r2": r2_knn}
+        {"name": "MLPRegressor", "mae": mae_mlp, "r2": r2_mlp, "best_params": grid_mlpr.best_params_},
+        {"name": "ExtraTreeRegressor", "mae": mae_etr, "r2": r2_etr, "best_params": grid_etr.best_params_},
+        {"name": "KNeighborsRegressor", "mae": mae_knn, "r2": r2_knn, "best_params": grid_knn.best_params_}
     ]
 
     results_sorted = sorted(results, key=lambda result: result["mae"])
@@ -122,4 +126,5 @@ if __name__ == "__main__":
     print("\nSummary of Results:")
     for result in results_sorted:
         print(f"{result['name']}: Mean Absolute Error: {result['mae']}, R2 Score: {result['r2']}")
+        print(f"Best params: {result['best_params']}")
         

@@ -334,16 +334,9 @@ if __name__ == "__main__":
         {"name": "GradientBoostingRegressor", "mae": mae_gb, "r2": r2_gb},
         {"name": "HistGradientBoostingRegressor", "mae": mae_hgbr, "r2": r2_hgbr},
         {"name": "KNeighborsRegressor", "mae": mae_knn, "r2": r2_knn},
-        """
-        {"name": "Ridge Regression", "mae": mae_ridge, "r2": r2_ridge},
-        {"name": "Polynomial Regression", "mae": mae_poly, "r2": r2_poly},
-        {"name": "GaussianProcessRegressor", "mae": mae_gpr, "r2": r2_gpr},
-        {"name": "PLSRegression", "mae": mae_plsr, "r2": r2_plsr},
-        {"name": "ElasticNet Regression", "mae": mae_enet, "r2": r2_enet},
-        """
     ]
 
-    results_sorted = sorted(results, key=lambda result: result["mae"], reverse=True)
+    results_sorted = sorted(results, key=lambda result: result["mae"])
 
     for result in results_sorted:
         print(f"{result['name']}: Mean Absolute Error: {result['mae']}, R2 Score: {result['r2']}")    
