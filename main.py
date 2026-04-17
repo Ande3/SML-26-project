@@ -1,3 +1,5 @@
+from numpy.testing import verbose
+
 from utils import load_config, load_dataset, load_test_dataset, print_results, save_results
 
 # sklearn imports...
@@ -27,28 +29,38 @@ if __name__ == "__main__":
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # Model 
-    model = Pipeline([
-        ("scaler", StandardScaler()),
-        ("pca", PCA()),
-        ("model", MLPRegressor(random_state=42, max_iter=3000))
+    KNN = Pipeline([
+        ('scaler', StandardScaler()),
+        ('pca', PCA()),
+        ('model', KNeighborsRegressor())
     ])
 
-    param_grid = {
-        "pca__n_components": [5, 10, 30, 50, 100],
-        "model__hidden_layer_sizes": [(64, 64 ,64, 64),(128, 128, 128), (256, 256, 256),],
-        "model__alpha": [0.05, 0.1, 0.2, 0.5]
-    }
+    param_grid = [                              # Mit und ohne PCA testen
+    {
+        "pca": [PCA()],
+        "pca__n_components": [20, 50, 100, 150],
+        "model__n_neighbors": range(1, 30, 2),
+        "model__weights": ["uniform", "distance"],
+    },
+    {
+        "pca": ["passthrough"],
+        "model__n_neighbors": range(1, 30, 2),
+        "model__weights": ["uniform", "distance"],
+    },
+    ]
 
-    # Grid Search 
-    grid = GridSearchCV(model, param_grid=param_grid, cv=3, scoring='neg_mean_absolute_error',n_jobs=-1, verbose=2)
-    grid.fit(X_train, y_train)
+    # Grid Search
+    grid_knn = GridSearchCV(KNN, param_grid=param_grid, cv=5, scoring='neg_mean_absolute_error', n_jobs=-1, verbose=2)
+    grid_knn.fit(X_train, y_train)
 
-    best_model = grid.best_estimator_
+    best_model_knn = grid_knn.best_estimator_
 
     # Evaluation of the model
-    y_pred = best_model.predict(X_test)
-    print_results(y_test, y_pred)
-    print("Best model:", grid.best_estimator_)
+    y_pred = best_model_knn.predict(X_test)
+    mae_knn = mean_absolute_error(y_test, y_pred)
+    r2_knn = r2_score(y_test, y_pred)
+    print(f"KNeighborsRegressor: Mean Absolute Error: {mae_knn}, KNeighborsRegressor R2 Score: {r2_knn}")
+    print("Best KNeighborsRegressor model:", grid_knn.best_estimator_)
 
     """ # Train on whole Dataset and make predictions on test_images
 
