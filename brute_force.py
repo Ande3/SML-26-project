@@ -1,5 +1,5 @@
 from utils import load_config, load_dataset, load_test_dataset, print_results, save_results
-from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.model_selection import GridSearchCV, train_test_split, KFold
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 from sklearn.decomposition import PCA
@@ -14,6 +14,7 @@ from sklearn.metrics import mean_absolute_error, r2_score
 
 n_jobs = -1  # Use all available CPU cores for parallel processing
 verbose = 2  # Set verbose level for GridSearchCV to get detailed output during the search process
+cv = KFold(n_splits=5, shuffle=True, random_state=42) # Define KFold cross-validator with 5 splits, shuffling, and a fixed random state for reproducibility
 
 if __name__ == "__main__":
     # Load configs from "config.yaml"
@@ -40,7 +41,7 @@ if __name__ == "__main__":
         }
 
     # Grid Search 
-    grid_mlpr = GridSearchCV(MLPr, param_grid=param_grid, cv=5, scoring='neg_mean_absolute_error',n_jobs=n_jobs, verbose=verbose)
+    grid_mlpr = GridSearchCV(MLPr, param_grid=param_grid, cv=cv, scoring='neg_mean_absolute_error',n_jobs=n_jobs, verbose=verbose)
     grid_mlpr.fit(X_train, y_train)
 
     best_model_mlpr = grid_mlpr.best_estimator_
@@ -65,7 +66,7 @@ if __name__ == "__main__":
         }
 
     # Grid Search 
-    grid_rfr = GridSearchCV(RFR, param_grid=param_grid, cv=5, scoring='neg_mean_absolute_error',n_jobs=n_jobs, verbose=verbose)
+    grid_rfr = GridSearchCV(RFR, param_grid=param_grid, cv=cv, scoring='neg_mean_absolute_error',n_jobs=n_jobs, verbose=verbose)
     grid_rfr.fit(X_train, y_train)
 
     best_model_rfr = grid_rfr.best_estimator_
@@ -89,7 +90,7 @@ if __name__ == "__main__":
     }
 
     # Grid Search
-    grid_etr = GridSearchCV(ETR, param_grid=param_grid, cv=5, scoring='neg_mean_absolute_error',n_jobs=n_jobs, verbose=verbose)
+    grid_etr = GridSearchCV(ETR, param_grid=param_grid, cv=cv, scoring='neg_mean_absolute_error',n_jobs=n_jobs, verbose=verbose)
     grid_etr.fit(X_train, y_train)
 
     best_model_etr = grid_etr.best_estimator_
@@ -115,7 +116,7 @@ if __name__ == "__main__":
     }
 
     # Grid Search
-    grid_gbr = GridSearchCV(GBR, param_grid=param_grid, cv=5, scoring='neg_mean_absolute_error',n_jobs=n_jobs, verbose=verbose)
+    grid_gbr = GridSearchCV(GBR, param_grid=param_grid, cv=cv, scoring='neg_mean_absolute_error',n_jobs=n_jobs, verbose=verbose)
     grid_gbr.fit(X_train, y_train)
 
     best_model_gbr = grid_gbr.best_estimator_
@@ -142,7 +143,7 @@ if __name__ == "__main__":
     }
 
     # Grid Search
-    grid_hgbr = GridSearchCV(HGBR, param_grid=param_grid, cv=5, scoring='neg_mean_absolute_error', n_jobs=n_jobs, verbose=verbose)
+    grid_hgbr = GridSearchCV(HGBR, param_grid=param_grid, cv=cv, scoring='neg_mean_absolute_error', n_jobs=n_jobs, verbose=verbose)
     grid_hgbr.fit(X_train, y_train)
 
     best_model_hgbr = grid_hgbr.best_estimator_
@@ -178,7 +179,7 @@ if __name__ == "__main__":
 ]
 
     # Grid Search
-    grid_knn = GridSearchCV(KNN, param_grid=param_grid, cv=5, scoring='neg_mean_absolute_error', n_jobs=n_jobs, verbose=verbose)
+    grid_knn = GridSearchCV(KNN, param_grid=param_grid, cv=cv, scoring='neg_mean_absolute_error', n_jobs=n_jobs, verbose=verbose)
     grid_knn.fit(X_train, y_train)
 
     best_model_knn = grid_knn.best_estimator_
